@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background: black;
+            height: 100vh;
+            width: 80vw;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .crosshair {
+            cursor: crosshair;
+        }
+
+        .btn {
+            cursor: pointer;
+            scroll-padding: 10px;
+        }
+
+        .info {
+            position: absolute;
+            top: 1vh;
+            left: calc(50% - 100px);
+            color: white;
+            width: 200px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <canvas id="canvas" width="1200" height="700" style="margin-top: 50px;">
+        </canvas>
+    </div>
+    <script>
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.strokeStyle = "#FFFF00";
+
+        var img = new Image();
+        var dot = [];
+
+        initCanvas();
+        canvas.addEventListener('click', function (e) {
+            addDot(e.layerX, e.layerY);
+            initCanvas();
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.lineJoin = "round";
+            dot.forEach((item, itemIndex) => {
+                ctx.moveTo(item.x, item.y);
+                ctx.arc(item.x, item.y, 2, 0, Math.PI * 2, true);
+                if (itemIndex > 0) {
+                    ctx.moveTo(dot[itemIndex - 1].x, dot[itemIndex - 1].y);
+                    ctx.lineTo(item.x, item.y);
+                }
+                if (itemIndex >= 2 && itemIndex === dot.length - 1) {
+                    ctx.moveTo(item.x, item.y);
+                    ctx.lineTo(dot[0].x, dot[0].y);
+                }
+                ctx.fill();
+                ctx.stroke();
+            })
+            canvas.toDataURL('image/png');
+        });
+
+        function initCanvas() {
+            img.onload = function () {
+                _this = this;
+                ctx.drawImage(_this, 0, 0, 1200, 700);
+                ctx.stroke();
+            }
+            img.src = './bg.png';
+        }
+
+        function addDot(x, y) {
+            dot.push({
+                x: x,
+                y: y
+            });
+        }
+    </script>
+</body>
+
+</html>
